@@ -1,0 +1,14 @@
+# TEST ONLY
+tls:
+  enabled: true
+  minVersion: TLSv1.0
+  cipherSuites:
+    - TLS_RSA_WITH_3DES_EDE_CBC_SHA
+    - TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+certManager:
+  enabled: true
+  privateKey:
+    algorithm: RSA
+    size: 2048
+jwt:
+  algorithm: RS256

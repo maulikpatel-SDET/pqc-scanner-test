@@ -1,0 +1,14 @@
+# CI pipeline signing images with a cosign ECDSA key. TEST ONLY.
+# (Kept outside .github/workflows so it never runs.)
+name: release
+on: workflow_dispatch
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sigstore/cosign-installer@v3
+      - run: cosign generate-key-pair
+      - run: cosign sign --key cosign.key ghcr.io/testbed/app:latest
+        env:
+          COSIGN_PASSWORD: ""
+      - run: openssl dgst -sha1 -sign keys/rsa_private.pem -out app.sig app.tar

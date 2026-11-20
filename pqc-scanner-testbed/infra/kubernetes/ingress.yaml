@@ -1,0 +1,28 @@
+# NGINX ingress allowing TLS 1.0/1.1 and weak ciphers. TEST ONLY.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: testbed
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1 TLSv1.1 TLSv1.2"
+    nginx.ingress.kubernetes.io/ssl-ciphers: "DES-CBC3-SHA:RC4-SHA:ECDHE-RSA-AES128-SHA"
+spec:
+  tls:
+    - hosts: ["testbed.local"]
+      secretName: testbed-tls
+  rules:
+    - host: testbed.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: testbed, port: { number: 80 } }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-nginx-controller
+data:
+  ssl-protocols: "TLSv1 TLSv1.1"
+  ssl-ciphers: "3DES:RC4:MD5"

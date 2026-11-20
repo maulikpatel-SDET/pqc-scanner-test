@@ -1,0 +1,20 @@
+# Envoy listener with TLS 1.0 minimum and legacy ciphers. TEST ONLY.
+static_resources:
+  listeners:
+    - name: https
+      address: { socket_address: { address: 0.0.0.0, port_value: 8443 } }
+      filter_chains:
+        - transport_socket:
+            name: envoy.transport_sockets.tls
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+              require_client_certificate: true
+              common_tls_context:
+                tls_params:
+                  tls_minimum_protocol_version: TLSv1_0
+                  tls_maximum_protocol_version: TLSv1_2
+                  cipher_suites: ["ECDHE-RSA-AES128-SHA", "AES128-SHA", "DES-CBC3-SHA"]
+                  ecdh_curves: ["P-256"]
+                tls_certificates:
+                  - certificate_chain: { filename: /certs/rsa_server.cert }
+                    private_key: { filename: /keys/rsa_private.pem }

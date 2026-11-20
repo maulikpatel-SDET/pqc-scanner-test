@@ -1,0 +1,33 @@
+# Ansible playbook generating RSA/ECC keys and weak TLS config. TEST ONLY.
+- hosts: webservers
+  become: true
+  tasks:
+    - name: Generate RSA private key
+      community.crypto.openssl_privatekey:
+        path: /etc/ssl/private/server.key
+        type: RSA
+        size: 2048
+
+    - name: Generate ECC private key
+      community.crypto.openssl_privatekey:
+        path: /etc/ssl/private/ec.key
+        type: ECC
+        curve: secp256r1
+
+    - name: Self-signed certificate with SHA-1
+      community.crypto.x509_certificate:
+        path: /etc/ssl/certs/server.crt
+        privatekey_path: /etc/ssl/private/server.key
+        provider: selfsigned
+        selfsigned_digest: sha1
+
+    - name: Generate SSH RSA key
+      community.crypto.openssh_keypair:
+        path: /home/deploy/.ssh/id_rsa
+        type: rsa
+        size: 2048
+
+    - name: Allow TLS 1.0 in nginx
+      ansible.builtin.lineinfile:
+        path: /etc/nginx/nginx.conf
+        line: "ssl_protocols TLSv1 TLSv1.1 TLSv1.2;"

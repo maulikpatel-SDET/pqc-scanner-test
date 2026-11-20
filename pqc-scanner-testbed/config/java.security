@@ -1,0 +1,13 @@
+# java.security re-enabling TLS 1.0/1.1, 3DES, RC4, SHA-1 and small RSA keys. TEST ONLY.
+security.provider.1=SUN
+security.provider.2=SunRsaSign
+security.provider.3=SunEC
+security.provider.4=SunJSSE
+security.provider.5=SunPKCS11 /opt/testbed/config/sunpkcs11.cfg
+jdk.tls.disabledAlgorithms=SSLv3, NULL
+jdk.certpath.disabledAlgorithms=MD2
+jdk.jar.disabledAlgorithms=MD2
+jdk.tls.legacyAlgorithms=3DES_EDE_CBC, RC4_128, DES_CBC
+jdk.security.legacyAlgorithms=SHA1, RSA keySize < 2048, DSA keySize < 2048
+keystore.type=jks
+jdk.tls.client.protocols=TLSv1,TLSv1.1,TLSv1.2

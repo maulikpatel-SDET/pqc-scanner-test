@@ -1,0 +1,17 @@
+# Docker Compose with legacy TLS settings. TEST ONLY.
+services:
+  api:
+    build: .
+    ports: ["8443:8443"]
+    environment:
+      TLS_VERSION: TLSv1
+      SSL_PROTOCOLS: "TLSv1 TLSv1.1"
+      SSL_CIPHERS: "DES-CBC3-SHA:RC4-SHA"
+      JWT_ALGORITHM: RS256
+      HASH_ALGORITHM: md5
+    volumes:
+      - ../../certs/rsa_server.cert:/certs/server.crt:ro
+      - ../../keys/rsa_private.pem:/certs/server.key:ro
+  db:
+    image: postgres:12
+    command: ["postgres", "-c", "ssl=on", "-c", "ssl_min_protocol_version=TLSv1", "-c", "password_encryption=md5"]

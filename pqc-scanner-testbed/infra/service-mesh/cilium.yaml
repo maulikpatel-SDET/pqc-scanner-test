@@ -1,0 +1,14 @@
+# Cilium TLS policy. TEST ONLY.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tls-legacy
+spec:
+  endpointSelector: {}
+  egress:
+    - toPorts:
+        - ports: [{ port: "443", protocol: TCP }]
+          originatingTLS:
+            secret: { name: testbed-tls }
+          terminatingTLS:
+            secret: { name: testbed-tls }

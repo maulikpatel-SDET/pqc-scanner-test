@@ -1,0 +1,28 @@
+# cert-manager Certificate with RSA 2048 and ECDSA keys. TEST ONLY.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-tls
+spec:
+  secretName: {{ .Release.Name }}-tls
+  dnsNames: ["testbed.local"]
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+  privateKey:
+    algorithm: RSA
+    size: 2048
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-ecdsa
+spec:
+  secretName: {{ .Release.Name }}-ecdsa
+  dnsNames: ["api.testbed.local"]
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+  privateKey:
+    algorithm: ECDSA
+    size: 256

@@ -1,0 +1,42 @@
+#cloud-config
+# cloud-init with RSA SSH keys and a weak sshd config. TEST ONLY.
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCl8/d64pr8L297iClw/jIOPi96wum1dVEEJrL9ZSXe4N91QIO0uPmdh8YCo+t2ONzmEzsvQFej2nV9UV1ScP4WD/HP4DDgRlfQQuw9/ywxgbrSdESaEdbgVwj23hiW3U3AgPbzFb0xjhCQdp3q/EPxsQ2GJGjawzKRiVa8835ekLYJubl5K6h+G1F8Pa9o/2hdSjtOxnpuG1UA8ezgTQEt7mmnH9hNPhq6kvyZ1H019bhm6xDH8mQvwhzEgMOgDfssPFcLjeBAgRiWPfkjSURRn5mzranQ9jwdpIAOvdVIFguhrm1bH3fqVfoVBvAKA+5LpOxEbgniw+HNO0t4+cJZ test@pqc-testbed
+ssh_keys:
+  rsa_private: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEogIBAAKCAQEApfP3euKa/C9ve4gpcP4yDj4vesLptXVRBCay/WUl3uDfdUCD
+    tLj5nYfGAqPrdjjc5hM7L0BXo9p1fVFdUnD+Fg/xz+Aw4EZX0ELsPf8sMYG60nRE
+    mhHW4FcI9t4Ylt1NwID28xW9MY4QkHad6vxD8bENhiRo2sMykYlWvPN+XpC2Cbm5
+    eSuofhtRfD2vaP9oXUo7TsZ6bhtVAPHs4E0BLe5ppx/YTT4aupL8mdR9NfW4ZusQ
+    x/JkL8IcxIDDoA37LDxXC43gQIEYlj35I0lEUZ+Zs62p0PY8HaSADr3VSBYLoa5t
+    Wx936lX6FQbwCgPuS6TsRG4J4sPhzTtLePnCWQIDAQABAoIBAAtxqF9upMQvA7uz
+    szLl7p79khHfwtTW+R4lioqPmPXWkUZRS3vRFTKUMDcSpXxGtdH+YcKTh++mUxuQ
+    GrTCkr0D/reIdOpkY24azVaFpB8qXG8ioi/zOruH+PfoLy8pJfFYW18+QKicDL+f
+    lGqF2KwgOuflFx993jz7yPHZAz4DVXVYs3c4BYS52lGtibns3jLj2J3d37gnXEFx
+    6nzFIx8A0fDgMnBsoRLEgPsL16zH2lGfA/46oOEFAcVc25epo5rm/kb22CwofUpu
+    ErDNujRsgazoEQaJ4VTE9b8r55cKMnVyKdSduGJAPE8UKgdPDvtSAiMg24aWzU+j
+    U7zvfpECgYEA2w/FwjBTYDaJJEzZAx+xhVEIGLL8TOqUvXkK2dGcdiIieAv6YCOY
+    10Tb7QhCmx/AemARJi59MbdhwB8n4giwp4IRAr2gWS3cv8spVHEMy8mPCPE/N0vE
+    3mXJ9tJ3g5bc7qk98xGkQMOnUWQY8xadVx2eRu/zwC7ofFzCIeW9+3ECgYEAwe+n
+    42Dc8S5SWzUbu9vVGwxP/AkQybmWwUoM/Omt4UJHP7rJ+ElrZpmIFopLPcuMXR6H
+    +RKSdIuZhYBbmHuPW4WZbhDtrsfjxVnVcSKRYZa7GpFK170rpv6CRnGMPViAMhV4
+    V77+3ZGUKrzBfMPB4sW2+h6sHNQeeDam8+c9MWkCgYBZcLknrh98mwengJDiS6Bp
+    dEo/+2Qz61tLeQ5LHOArA4jbRti1RBN1YTICN2sqdu5ZiLu3wSdwkxUgIhhgm3e1
+    DM/xNIcxoh4NWN/JEFdPJT53QjizVQZOX3T0h74wRfpynzsh8UQFBV1dR+c/6S3Y
+    kck74WC+SOi3ThAdUvYcoQKBgFICyJps4cHT9tu/D6VXhzzS7hgEtWa45rmCWQ+y
+    ueciIgMfOD2YvqQ6lMQDY2IUa50NRi7b3bcPObKs3w8SYUMwsftLiVd6DCXuoUYg
+    eh4soZ7QhjfJNWZ/BhRH/CgM/tkvHx7sE9casu+HtsLN/XWqaoBG7D2cre3kHqHR
+    zZzRAoGAEZYMk6/gcoQzuFFNHZ5bkh6FkVydvljRW+K6Atwk/a9/r+s7XTy4Zq9N
+    GpZ6Pqsa75LN0+1EIAZWaktWQ6/f0GmWPkOWeLS7AezS4mIO8SCKnNzPSJZdS3b9
+    bl+4Cl3qHk3iZoertK3DIDZUem56+3Mw+c2hzCT5mvfFkLhyzmo=
+    -----END RSA PRIVATE KEY-----
+  rsa_public: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCl8/d64pr8L297iClw/jIOPi96wum1dVEEJrL9ZSXe4N91QIO0uPmdh8YCo+t2ONzmEzsvQFej2nV9UV1ScP4WD/HP4DDgRlfQQuw9/ywxgbrSdESaEdbgVwj23hiW3U3AgPbzFb0xjhCQdp3q/EPxsQ2GJGjawzKRiVa8835ekLYJubl5K6h+G1F8Pa9o/2hdSjtOxnpuG1UA8ezgTQEt7mmnH9hNPhq6kvyZ1H019bhm6xDH8mQvwhzEgMOgDfssPFcLjeBAgRiWPfkjSURRn5mzranQ9jwdpIAOvdVIFguhrm1bH3fqVfoVBvAKA+5LpOxEbgniw+HNO0t4+cJZ
+ssh_genkeytypes: [rsa, ecdsa]
+write_files:
+  - path: /etc/ssh/sshd_config.d/legacy.conf
+    content: |
+      KexAlgorithms diffie-hellman-group1-sha1,diffie-hellman-group14-sha1
+      Ciphers 3des-cbc,aes128-cbc
+      MACs hmac-md5,hmac-sha1
+      HostKeyAlgorithms ssh-rsa,ssh-dss

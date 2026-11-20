@@ -1,0 +1,27 @@
+# Consul Connect CA with RSA 2048 and TLS 1.0 minimum. TEST ONLY.
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: Mesh
+metadata:
+  name: mesh
+spec:
+  tls:
+    incoming:
+      tlsMinVersion: TLSv1_0
+      cipherSuites: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+    outgoing:
+      tlsMinVersion: TLSv1_0
+---
+global:
+  tls:
+    enabled: true
+    verify: false
+connectInject:
+  enabled: true
+server:
+  extraConfig: |
+    {
+      "connect": {
+        "ca_config": { "private_key_type": "rsa", "private_key_bits": 2048 }
+      },
+      "tls": { "defaults": { "tls_min_version": "TLSv1_0" } }
+    }

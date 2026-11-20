@@ -1,0 +1,23 @@
+# OpenSSL config allowing TLS 1.0, SHA-1 and SECLEVEL 0. TEST ONLY.
+openssl_conf = default_conf
+
+[default_conf]
+ssl_conf = ssl_sect
+
+[ssl_sect]
+system_default = system_default_sect
+
+[system_default_sect]
+MinProtocol = TLSv1
+CipherString = DEFAULT@SECLEVEL=0
+
+[req]
+default_bits = 1024
+default_md = sha1
+distinguished_name = req_dn
+
+[req_dn]
+commonName = testbed.local
+
+[CA_default]
+default_md = md5

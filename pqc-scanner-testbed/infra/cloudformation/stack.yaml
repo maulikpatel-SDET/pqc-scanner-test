@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Quantum-vulnerable KMS key and legacy TLS listener. TEST ONLY.
+Resources:
+  SigningKey:
+    Type: AWS::KMS::Key
+    Properties:
+      KeySpec: RSA_2048
+      KeyUsage: SIGN_VERIFY
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root" }
+            Action: "kms:*"
+            Resource: "*"
+  EccKey:
+    Type: AWS::KMS::Key
+    Properties:
+      KeySpec: ECC_NIST_P384
+      KeyUsage: SIGN_VERIFY
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-TLS-1-0-2015-04
+      Certificates:
+        - CertificateArn: !Ref Certificate
+      DefaultActions:
+        - Type: fixed-response
+          FixedResponseConfig: { StatusCode: "200" }
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        ViewerCertificate:
+          AcmCertificateArn: !Ref Certificate
+          MinimumProtocolVersion: TLSv1
+          SslSupportMethod: sni-only

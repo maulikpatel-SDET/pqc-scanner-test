@@ -1,0 +1,5 @@
+apiVersion: v2
+name: testbed
+description: Helm chart with weak TLS defaults. TEST ONLY.
+version: 0.0.1
+appVersion: "0.0.1"
