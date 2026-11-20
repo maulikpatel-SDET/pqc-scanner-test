@@ -1,0 +1,156 @@
+name: 'PQC Vulnerability Scanner'
+description: 'Detect quantum-vulnerable cryptography (RSA, ECDSA, ECDH, DES, SHA-1, etc.). Runs in your runner; without a Qryptive key it sends nothing to Qryptive.'
+author: 'Qryptive'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  paths:
+    description: 'Glob patterns to scan (space-separated). Default is full-repo scan to match platform/UI scans; scanner internally skips binaries, files >1MB, and low-signal data formats (.json/.yaml/.xml per-file). Source code (.py/.java/.go/.js/.jsx/.ts/.tsx/.mjs/.cjs), IaC (.tf/.yaml/Dockerfile), manifest files (pom.xml/package.json), and asset files (.pem/.crt/.key/.properties) all need to be in the file list for full parity with platform/UI scans.'
+    default: '**/*'
+    required: false
+  fail_on_vulnerable:
+    description: 'Fail the build if vulnerable algorithms are found'
+    default: 'true'
+    required: false
+  severity_threshold:
+    description: 'Minimum severity to report: critical, high, medium, low'
+    default: 'medium'
+    required: false
+  pqc_api_key:
+    description: 'API key for auto-remediation (paid tier). If set, opens a fix PR automatically.'
+    required: false
+  pqc_scanner_key:
+    description: 'Free scanner key (get one at https://qryptive.ai/scanner/get-key) — an alternative to pqc_api_key for a workflow with no Qryptive account. Ignored if pqc_api_key is set. Does not enable auto-fix.'
+    required: false
+  migration_mode:
+    description: 'Migration strategy: pqc_only (default), staged_rollout, pqc_preferred, hybrid'
+    default: 'pqc_only'
+    required: false
+  report_format:
+    description: 'Output format: annotations (default), sarif, json'
+    default: 'annotations'
+    required: false
+  scan_scope:
+    description: 'Files to scan: changed (only files in this push/PR, default), all (entire repo), or auto (changed files on pull requests, the entire repo on every other event). An unrecognised value scans the entire repo and prints a warning.'
+    default: 'changed'
+    required: false
+  baseline_scan:
+    description: 'Scan the whole repo on the first run even when scan_scope is changed (default true). Also controls the platform periodically requesting a fresh whole-repo scan to keep repository-wide state (like which keys are still in use) from going stale. Set false to disable both.'
+    default: 'true'
+    required: false
+  scan_id:
+    description: 'Platform scan ID to link the fix PR back to (set automatically when triggered by platform)'
+    required: false
+  fix_run_id:
+    description: "Correlation id for an explicit repo-level fix run (set by platform dispatch). Empty for normal scans."
+    required: false
+    default: ""
+  platform_url:
+    description: 'Override the platform API base URL (default: https://qryptive.ai). Useful for testing against a local or staging instance via ngrok.'
+    required: false
+  auto_fix:
+    description: 'Open a fix PR automatically when vulnerabilities are found. Off by default: opt in with "true". Requires pqc_api_key + github_token + workflow `contents: write` and `pull-requests: write` permissions, and a plan that includes it.'
+    default: 'false'
+    required: false
+  github_token:
+    description: 'GitHub token used to create fix PRs. Pass secrets.GITHUB_TOKEN. Required only when auto_fix is true.'
+    required: false
+
+outputs:
+  report_path:
+    description: 'Workspace-relative path of the JSON report (qryptive-scan-report.json) when report_format is json.'
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/qryptive/pqc-scanner:v1'
+  env:
+    INPUT_PATHS: ${{ inputs.paths }}
+    INPUT_FAIL_ON_VULNERABLE: ${{ inputs.fail_on_vulnerable }}
+    INPUT_SEVERITY_THRESHOLD: ${{ inputs.severity_threshold }}
+    INPUT_PQC_API_KEY: ${{ inputs.pqc_api_key }}
+    INPUT_PQC_SCANNER_KEY: ${{ inputs.pqc_scanner_key }}
+    INPUT_AUTO_FIX: ${{ inputs.auto_fix }}
+    INPUT_MIGRATION_MODE: ${{ inputs.migration_mode }}
+    INPUT_REPORT_FORMAT: ${{ inputs.report_format }}
+    INPUT_SCAN_SCOPE: ${{ inputs.scan_scope }}
+    INPUT_BASELINE_SCAN: ${{ inputs.baseline_scan }}
+    INPUT_SCAN_ID: ${{ inputs.scan_id }}
+    INPUT_FIX_RUN_ID: ${{ inputs.fix_run_id }}
+    PQC_PLATFORM_URL: ${{ inputs.platform_url }}
+    PQC_GITHUB_TOKEN: ${{ inputs.github_token }}
+    # Enable asset discovery (PEM keys, certs, SSH keys, secrets, KMS refs, TLS
+    # configs) so GitHub Action customers get the same coverage as platform/UI
+    # scans. Without this, GHA scans only catch crypto-code findings — they
+    # miss embedded cert files, hardcoded keys, weak TLS configs etc.
+    # NOTE: pem_utils.PEM_BLOCK_RE has known catastrophic backtracking on
+    # malformed PEM blocks (BEGIN without matching END). Mitigation tracked
+    # as a TODO; in practice only fires on truncated PEMs / doc examples
+    # without END label. Worst case: one customer file hangs scan ~5 min
+    # before platform timeout catches it.
+    SCANNER_ASSET_DISCOVERY_ENABLED: 'true'
+    # TLS servers started in code/config (QP-317). Rides the asset-discovery pass
+    # above; default on, set explicitly so a runner mirrors pqc-scanner.
+    SCANNER_TLS_SERVER_DETECTOR_ENABLED: 'true'
+    SCANNER_FINDING_GATE_ENABLED: 'true'
+    SCANNER_TIER_GATE_ENABLED: 'true'
+    # Phase 4 IaC config detection (WireGuard/IPsec/OpenVPN .conf/.ovpn,
+    # docker-compose TLS_VERSION, CI/CD cosign signing keys, Istio/Linkerd
+    # service-mesh mTLS). Gives GitHub Action customers parity with the
+    # platform/UI scan path (ECS scanner runs with this flag on). Detectors
+    # are content-gated, so generic non-crypto .conf files yield no findings.
+    SCANNER_IAC_EXTENDED_DETECTION_ENABLED: 'true'
+    # Keypair lifecycle graph (QP-36). Parity with the platform/UI scan path,
+    # where pqc-scanner runs with this on. Without it the CI path builds no
+    # graph and the customer's Keypair Estate stays permanently empty with no
+    # error — the bug QP-36 exists to fix. Note the flag alone is NOT sufficient
+    # (the assembly has to be reachable in-process); it is necessary, though.
+    SCANNER_KEYPAIR_GRAPH_ENABLED: 'true'
+    # Ceiling on the findings-bearing file set handed to the graph builder. The
+    # graph is one whole-repo pass holding a cross-file map resident, unlike the
+    # scan itself which releases each ~50-file batch — this is what stops a
+    # pathological repo hanging a customer's build.
+    KEYPAIR_GRAPH_MAX_FILES: '2000'
+    # Cross-file keypair candidates (QP-39). Widens which non-finding-bearing
+    # Python files get an extra LibCST pass so a verifier/consumer in a file
+    # with no crypto finding of its own can still attach to the graph. Off
+    # (false/0/no) reverts to byte-identical pre-QP-39 behaviour.
+    SCANNER_KEYPAIR_CANDIDATES_ENABLED: 'true'
+    # Fixes the Python keygen anchor's enclosing-class resolution so
+    # cross-file verifier attach works even when a finding's own class_name
+    # is unset. Independent of the candidates switch above (plan §9).
+    SCANNER_KEYPAIR_ANCHOR_CLASS_ENABLED: 'true'
+    # Per-endpoint built_in/fetched/unknown key-distribution classification
+    # (QP-355). Parity with the platform/UI scan path, where pqc-scanner runs
+    # with this on; default true, set explicitly so a runner mirrors it.
+    SCANNER_KEY_DISTRIBUTION_ENABLED: 'true'
+    # Per-site ready/upgrade_needed/unknown post-quantum capability, read from
+    # the build files this runner collects off the checked-out workspace
+    # (QP-363 D12). Parity with the platform/UI scan path; default true, set
+    # explicitly so a runner mirrors it. Off, the runner reads no build files at
+    # all and every site reads unknown.
+    SCANNER_PQ_CAPABILITY_ENABLED: 'true'
+    # Service-mesh observations (QP-526): per-file facts about Istio, Linkerd, Envoy, Consul
+    # and Cilium settings, sent once per scan and read by the post-quantum switch page.
+    # Default true, set explicitly so a runner mirrors the platform/UI scan path. Off, the
+    # keys are present and empty, so nothing is stored and nothing is retired.
+    SCANNER_MESH_OBSERVATIONS_ENABLED: 'true'
+    # Certificate/public-key pin detection (QP-355 D7/D13) — OkHttp, TrustKit,
+    # Android network_security_config.xml, Python/Go/JS fingerprint checks and
+    # HTTP Public-Key-Pins headers. Parity with the platform/UI scan path;
+    # default true, set explicitly so a runner mirrors it.
+    SCANNER_PIN_DETECTION_ENABLED: 'true'
+    # Key definitions in infrastructure code and the code that calls a key service
+    # (QP-486). Terraform key resources (AWS KMS, Azure Key Vault, Google Cloud KMS,
+    # Vault transit) are reported with their real algorithm and the facts the platform
+    # joins to a call by key reference; KMS/Key Vault/Cloud KMS/Vault calls become sites
+    # carrying the reference as written. Parity with the platform/UI scan path; default
+    # true, set explicitly so a runner mirrors it and a rollback flips one visible place.
+    SCANNER_IAC_KEY_DEFINITIONS_ENABLED: 'true'
+    SCANNER_CLOUD_KEY_REFERENCES_ENABLED: 'true'
+    # Ceiling on the candidate file set (measured default, plan §2.5.2b).
+    # Candidates over this cap are dropped in sha256(path) order — a WARN
+    # logged in keypair_graph_core.py, never surfaced to the customer — and
+    # the graph is still built from what's left.
+    KEYPAIR_GRAPH_MAX_CANDIDATE_FILES: '100'
