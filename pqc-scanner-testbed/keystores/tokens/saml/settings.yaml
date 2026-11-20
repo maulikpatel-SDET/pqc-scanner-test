@@ -1,0 +1,9 @@
+# SAML SP settings. TEST ONLY.
+saml:
+  sp:
+    entity_id: https://sp.testbed.local/metadata
+    signing_key: keys/rsa_private.pem
+  security:
+    signature_algorithm: http://www.w3.org/2000/09/xmldsig#rsa-sha1
+    digest_algorithm: http://www.w3.org/2000/09/xmldsig#sha1
+    want_assertions_signed: true

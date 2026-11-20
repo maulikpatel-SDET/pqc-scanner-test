@@ -1,0 +1,29 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "use": "sig",
+      "alg": "RS256",
+      "kid": "rsa-test-1",
+      "n": "pfP3euKa_C9ve4gpcP4yDj4vesLptXVRBCay_WUl3uDfdUCDtLj5nYfGAqPrdjjc5hM7L0BXo9p1fVFdUnD-Fg_xz-Aw4EZX0ELsPf8sMYG60nREmhHW4FcI9t4Ylt1NwID28xW9MY4QkHad6vxD8bENhiRo2sMykYlWvPN-XpC2Cbm5eSuofhtRfD2vaP9oXUo7TsZ6bhtVAPHs4E0BLe5ppx_YTT4aupL8mdR9NfW4ZusQx_JkL8IcxIDDoA37LDxXC43gQIEYlj35I0lEUZ-Zs62p0PY8HaSADr3VSBYLoa5tWx936lX6FQbwCgPuS6TsRG4J4sPhzTtLePnCWQ",
+      "e": "AQAB"
+    },
+    {
+      "kty": "EC",
+      "use": "sig",
+      "alg": "ES256",
+      "kid": "ec-test-1",
+      "crv": "P-256",
+      "x": "CvxI-6Ymtmn44ipuiG0mSDwZhmxfTBVwhi5MuuhTX-g",
+      "y": "AWWCMV4cBpd3KATqPicQXWgyaV-GNiGUr1lxj3TLoIg"
+    },
+    {
+      "kty": "RSA",
+      "use": "enc",
+      "alg": "RSA-OAEP",
+      "kid": "rsa-enc-1",
+      "n": "pfP3euKa_C9ve4gpcP4yDj4vesLptXVRBCay_WUl3uDfdUCDtLj5nYfGAqPrdjjc5hM7L0BXo9p1fVFdUnD-Fg_xz-Aw4EZX0ELsPf8sMYG60nREmhHW4FcI9t4Ylt1NwID28xW9MY4QkHad6vxD8bENhiRo2sMykYlWvPN-XpC2Cbm5eSuofhtRfD2vaP9oXUo7TsZ6bhtVAPHs4E0BLe5ppx_YTT4aupL8mdR9NfW4ZusQx_JkL8IcxIDDoA37LDxXC43gQIEYlj35I0lEUZ-Zs62p0PY8HaSADr3VSBYLoa5tWx936lX6FQbwCgPuS6TsRG4J4sPhzTtLePnCWQ",
+      "e": "AQAB"
+    }
+  ]
+}

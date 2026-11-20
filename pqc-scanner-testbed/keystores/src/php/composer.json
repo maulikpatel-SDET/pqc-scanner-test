@@ -1,0 +1,10 @@
+{
+  "name": "testbed/pqc-testbed",
+  "description": "Deliberately weak crypto. TEST ONLY.",
+  "require": {
+    "phpseclib/phpseclib": "2.0.30",
+    "firebase/php-jwt": "5.2.0",
+    "onelogin/php-saml": "3.6.1",
+    "web-token/jwt-signature-algorithm-rsa": "2.2.0"
+  }
+}

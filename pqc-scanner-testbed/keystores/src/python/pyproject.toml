@@ -1,0 +1,13 @@
+[project]
+name = "pqc-testbed"
+version = "0.0.1"
+description = "Deliberately weak crypto. TEST ONLY."
+requires-python = ">=3.10"
+dependencies = [
+  "cryptography==41.0.7",
+  "pycryptodome==3.19.0",
+  "rsa==4.9",
+  "ecdsa==0.18.0",
+  "python-jose[cryptography]==3.3.0",
+  "tpm2-pytss==2.1.0",
+]
